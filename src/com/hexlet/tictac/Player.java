@@ -9,12 +9,14 @@ public class Player {
         super();
     }
 
-    public void setName(String parameter) {
-        // TODO : to implement
+    public void setName(String name) {
+        if (!name.equals(""))
+        {
+            this.name = name;
+        }
     }
 
     public String getName() {
-        // TODO : to implement
-        return "";
+        return this.name;
     }
 }

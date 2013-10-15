@@ -10,6 +10,10 @@ public class Board {
     private final static int CENTER_FEATURE_PRICE = 3;
     private final static int USUAL_PRICE = 1;
 
+    public final static String COMP_MODE = "comp";
+    public final static String HUMAN_MODE = "human";
+    public final String gameMode;
+
     public int getBoardSize(){
         return board_size;
     }
@@ -38,7 +42,12 @@ public class Board {
     }
 
     public Board(int size){
+        this(size, HUMAN_MODE);
+    }
+
+    public Board(int size, String gameMode){
         this.board_size = size;
+        this.gameMode = gameMode;
         firstInit();
     }
 
