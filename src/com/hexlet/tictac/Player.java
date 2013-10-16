@@ -5,8 +5,13 @@ public class Player {
 
     private String ip;
 
-    public Player(){
-        super();
+    private char symbol = Cell.EMPTY_SYMBOL;
+
+    public Player(char symbol){
+       if (symbol == Cell.X_SYMBOL || symbol == Cell.O_SYMBOL)
+       {
+           this.symbol = symbol;
+       }
     }
 
     public void setName(String name) {
@@ -18,5 +23,9 @@ public class Player {
 
     public String getName() {
         return this.name;
+    }
+
+    public char getSymbol() {
+        return this.symbol;
     }
 }
