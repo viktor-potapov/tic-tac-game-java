@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class IOPart {
 
     private Scanner sc;
-
     private final int INCORRECT_VALUE = -1;
 
     public IOPart(){
@@ -19,7 +18,7 @@ public class IOPart {
         int x = checkXorY(lastIndex);
         if (x == INCORRECT_VALUE || y == INCORRECT_VALUE)
         {
-            System.out.println("Parametr \"x\" has to have next format: only Integer and from 0 to "+ lastIndex);
+            System.out.println("Parametr \"x\" and \"y\" has to have next format: only Integer and from 0 to "+ lastIndex);
             goPlayer(player, board);
         }
         else
@@ -37,6 +36,47 @@ public class IOPart {
         }
     }
 
+    public void showBoard(Board board) {
+        showPriceTable(board);
+        showPlayerTable(board);
+    }
+
+    public void askPlayerInfo(Player player, String firstName) {
+        System.out.print("Could you please enter "+ firstName +" name:");
+        String testName = sc.nextLine();
+        if (!testName.equals(""))
+        {
+            player.setName(testName);
+        }
+        else
+        {
+            System.out.println("You input empty name for " + firstName + ".");
+        }
+
+    }
+
+    public void celebrateWinner(Player player)
+    {
+        System.out.print("Congratulations! "+ player.getName()+" is winner!");
+    }
+
+    public void celebrateDraw()
+    {
+        System.out.print("Congratulations! Won the friendship! You no longer have free moves.");
+    }
+
+    public String askGameMode() {
+        String gameMode;
+        System.out.print("Do you want to play with human or computer? (human/comp):");
+        gameMode=sc.nextLine();
+        if (gameMode.equals(Board.HUMAN_MODE) || gameMode.equals(Board.COMP_MODE))
+        {
+            return gameMode;
+        }
+        System.out.print("Incorrect answer. Have to be \"human\" or \"comp\". ");
+        return  this.askGameMode();
+    }
+
     private int checkXorY(int lastIndex)
     {
         int result = INCORRECT_VALUE;
@@ -49,11 +89,6 @@ public class IOPart {
             }
         }
         return result;
-    }
-
-    public void showBoard(Board board) {
-        showPriceTable(board);
-        showPlayerTable(board);
     }
 
     private void showPriceTable(Board board){
@@ -78,36 +113,5 @@ public class IOPart {
             }
             System.out.println();
         }
-    }
-
-    public void askPlayerInfo(Player player, String firstName) {
-        System.out.print("Could you please enter "+ firstName +" name:");
-        String testName = sc.nextLine();
-        if (!testName.equals(""))
-        {
-            player.setName(testName);
-        }
-        else
-        {
-            System.out.println("You input empty name for " + firstName + ".");
-        }
-
-    }
-
-    public void celebrateWinner(Player player)
-    {
-        System.out.print("Congratulations! "+ player.getName()+" is winner!");
-    }
-
-    public String askGameMode() {
-        String gameMode;
-        System.out.print("Do you want to play with human or computer? (human/comp):");
-        gameMode=sc.nextLine();
-        if (gameMode.equals(Board.HUMAN_MODE) || gameMode.equals(Board.COMP_MODE))
-        {
-            return gameMode;
-        }
-        System.out.print("Incorrect answer. Have to be \"human\" or \"comp\". ");
-        return  this.askGameMode();
     }
 }

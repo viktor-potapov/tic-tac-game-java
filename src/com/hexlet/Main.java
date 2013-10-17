@@ -19,26 +19,36 @@ public class Main {
             io.askPlayerInfo(player2, "Player2");
             while (true)
             {
-                io.goPlayer(player1, board);
-                io.showBoard(board);
-                if (board.checkWin(player1.getSymbol()))
+                if (playerAction(player1, io, board))
                 {
-                    io.celebrateWinner(player1);
                     break;
-                }
-                io.goPlayer(player2, board);
-                io.showBoard(board);
-                if (board.checkWin(player2.getSymbol()))
+                };
+                if (playerAction(player2, io, board))
                 {
-                    io.celebrateWinner(player2);
                     break;
-                }
+                };
             }
         }
         else
         {
             io.showBoard(board);
         }
+    }
 
+    private static Boolean playerAction(Player player, IOPart io, Board board){
+        Boolean isEndOfGame = false;
+        io.goPlayer(player, board);
+        io.showBoard(board);
+        if (board.checkDraw())
+        {
+            io.celebrateDraw();
+            isEndOfGame = true;
+        }
+        if (board.checkWin(player.getSymbol()))
+        {
+            io.celebrateWinner(player);
+            isEndOfGame = true;
+        }
+        return isEndOfGame;
     }
 }
