@@ -11,11 +11,13 @@ public class Main {
         IOPart io = new IOPart();
         String gameMode = io.askGameMode();
         Board board = new Board(3, gameMode);
+        Player player1;
+        Player player2;
         if (gameMode.equals(Board.HUMAN_MODE))
         {
-            Player player1 = new Player(Cell.X_SYMBOL);
+            player1 = new Player(Cell.X_SYMBOL);
             io.askPlayerInfo(player1, "Player1");
-            Player player2 = new Player(Cell.O_SYMBOL);
+            player2 = new Player(Cell.O_SYMBOL);
             io.askPlayerInfo(player2, "Player2");
             while (true)
             {
@@ -31,13 +33,39 @@ public class Main {
         }
         else
         {
-            io.showBoard(board);
+            if (io.askWhoFirst() == io.FIRST_GO_HUMAN)
+            {
+                player1 = new Player(Cell.X_SYMBOL, "Human", true, true);
+                player2 = new Player(Cell.O_SYMBOL, "Computer", false, false);
+            }
+            else
+            {
+                player1 = new Player(Cell.X_SYMBOL, "Computer", false, true);
+                player2 = new Player(Cell.O_SYMBOL, "Human", true, false);
+            }
+            while (true)
+            {
+                if (playerAction(player1, io, board))
+                {
+                    break;
+                };
+                if (playerAction(player2, io, board))
+                {
+                    break;
+                };
+            }
         }
     }
 
     private static Boolean playerAction(Player player, IOPart io, Board board){
         Boolean isEndOfGame = false;
-        io.goPlayer(player, board);
+        if (player.getIsHuman()){
+            int[] currentXY = io.askNextPlayerStep(player, board);
+            board.goHuman(player, currentXY);
+        }
+        else {
+            board.goComputer(player);
+        }
         io.showBoard(board);
         if (board.checkDraw())
         {

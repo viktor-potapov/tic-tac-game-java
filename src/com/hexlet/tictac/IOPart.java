@@ -6,12 +6,15 @@ public class IOPart {
 
     private Scanner sc;
     private final int INCORRECT_VALUE = -1;
+    public final Boolean FIRST_GO_HUMAN = false;
+    public final Boolean FIRST_GO_COMP = true;
 
     public IOPart(){
         sc = new Scanner(System.in);
     }
 
-    public void goPlayer(Player player, Board board) {
+    /*Return correct x,y for new player step */
+    public int[] askNextPlayerStep(Player player, Board board) {
         int lastIndex = board.getBoardSize()-1;
         System.out.println(player.getName() + ", could you please input x, than input y where you want to put your symbol. It has to be from 0 to "+ lastIndex+". For example 0 and 0 mark top left corner");
         int y = checkXorY(lastIndex);
@@ -19,25 +22,25 @@ public class IOPart {
         if (x == INCORRECT_VALUE || y == INCORRECT_VALUE)
         {
             System.out.println("Parametr \"x\" and \"y\" has to have next format: only Integer and from 0 to "+ lastIndex);
-            goPlayer(player, board);
+            return askNextPlayerStep(player, board);
         }
         else
         {
-            Cell tempField = board.getField(x, y);
-            if (tempField.getIsFilled())
+            if (board.getField(x, y).getIsFilled())
             {
                 System.out.println("This cell already has filled. Try other x, y. ");
-                goPlayer(player, board);
+                return askNextPlayerStep(player, board);
             }
             else
             {
-                tempField.setSymbol(player.getSymbol());
+                int[] currentXY = {x, y};
+                return currentXY;
             }
         }
     }
 
     public void showBoard(Board board) {
-        showPriceTable(board);
+        showPriceTable(board); //Need only for testing computer logic. Comp select cell where is max price
         showPlayerTable(board);
     }
 
@@ -57,12 +60,12 @@ public class IOPart {
 
     public void celebrateWinner(Player player)
     {
-        System.out.print("Congratulations! "+ player.getName()+" is winner!");
+        System.out.println("Congratulations! "+ player.getName()+" is winner!");
     }
 
     public void celebrateDraw()
     {
-        System.out.print("Congratulations! Won the friendship! You no longer have free moves.");
+        System.out.println("Congratulations! Won the friendship! You no longer have free moves.");
     }
 
     public String askGameMode() {
@@ -75,6 +78,22 @@ public class IOPart {
         }
         System.out.print("Incorrect answer. Have to be \"human\" or \"comp\". ");
         return  this.askGameMode();
+    }
+
+    public Boolean askWhoFirst() {
+        String answer;
+        System.out.print("Who has to go first? (human/comp):");
+        answer=sc.nextLine();
+        if (answer.equals(Board.HUMAN_MODE))
+        {
+            return FIRST_GO_HUMAN;
+        }
+        if (answer.equals(Board.COMP_MODE))
+        {
+            return FIRST_GO_COMP;
+        }
+        System.out.print("Incorrect answer. Have to be \"human\" or \"comp\". ");
+        return this.askWhoFirst();
     }
 
     private int checkXorY(int lastIndex)

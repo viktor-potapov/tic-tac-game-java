@@ -7,11 +7,22 @@ public class Player {
 
     private char symbol = Cell.EMPTY_SYMBOL;
 
+    private Boolean isHuman;
+
+    private Boolean isFirst;
+
     public Player(char symbol){
-       if (symbol == Cell.X_SYMBOL || symbol == Cell.O_SYMBOL)
-       {
-           this.symbol = symbol;
-       }
+        this(symbol, "Human", true, false);
+    }
+
+    public Player(char symbol, String name, boolean isHuman, boolean isFirst){
+        if (symbol == Cell.X_SYMBOL || symbol == Cell.O_SYMBOL)
+        {
+            this.symbol = symbol;
+        }
+        this.setName(name);
+        this.isHuman = isHuman;
+        this.isFirst = isFirst;
     }
 
     public void setName(String name) {
@@ -27,5 +38,13 @@ public class Player {
 
     public char getSymbol() {
         return this.symbol;
+    }
+
+    public Boolean getIsHuman() {
+        return this.isHuman;
+    }
+
+    public Boolean getIsFirst() {
+        return this.isFirst;
     }
 }

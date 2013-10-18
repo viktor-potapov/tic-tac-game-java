@@ -11,6 +11,9 @@ public class Board {
     private final static int CORNER_FEATURE_PRICE = 2;
     private final static int CENTER_FEATURE_PRICE = 3;
     private final static int USUAL_PRICE = 1;
+
+    private final int INDEX_X = 0;
+    private final int INDEX_Y = 1;
     private Integer stepCounter;
 
     public Board(int size){
@@ -86,12 +89,74 @@ public class Board {
         return result;
     }
 
-    public void calculateFieldPrices() {
-        // TODO : to implement
+    public void goHuman(Player player, int[] currentXY)
+    {
+        int x = currentXY[INDEX_X];
+        int y = currentXY[INDEX_Y];
+        Cell tempField = fieldMatrix[x][y];
+        tempField.setSymbol(player.getSymbol());
+        if (player.getIsFirst())
+            calculateFieldPrices(x, y);
     }
 
-    public void goComputerPlayer() {
-        // TODO : to implement
+    public void goComputer(Player player) {
+        int maxI = 0;
+        int maxJ = 0;
+        int maxPrice = USUAL_PRICE;
+        for (int i = 0; i < board_size; i++)
+        {
+            for (int j = 0; j < board_size; j++)
+            {
+                if (fieldMatrix[i][j].getIsFilled() == false && fieldMatrix[i][j].getPrice() > maxPrice)
+                {
+                    maxI = i;
+                    maxJ = j;
+                    maxPrice = fieldMatrix[i][j].getPrice();
+                }
+            }
+        }
+        Cell tempField = fieldMatrix[maxI][maxJ];
+        tempField.setSymbol(player.getSymbol());
+        if (player.getIsFirst())
+            calculateFieldPrices(maxI, maxJ);
+    }
+
+    private void calculateFieldPrices(int currentX, int currentY) {
+        int tempPrice;
+        Cell tempField;
+        for (int i = 0; i < board_size; i++)
+        {
+            tempField = fieldMatrix[currentX][i];
+            if (tempField.getIsFilled() == false)
+            {
+                tempPrice = tempField.getPrice() + 1;
+                tempField.setPrice(tempPrice);
+            }
+            tempField = fieldMatrix[i][currentY];
+            if (tempField.getIsFilled() == false)
+            {
+                tempPrice = tempField.getPrice() + 1;
+                tempField.setPrice(tempPrice);
+            }
+            if (currentX == currentY)
+            {
+                tempField = fieldMatrix[i][i];
+                if (tempField.getIsFilled() == false)
+                {
+                    tempPrice = tempField.getPrice() + 1;
+                    tempField.setPrice(tempPrice);
+                }
+            }
+            if ((currentX + currentY) == (board_size - 1))
+            {
+                tempField = fieldMatrix[i][board_size-1-i];
+                if (tempField.getIsFilled() == false)
+                {
+                    tempPrice = tempField.getPrice() + 1;
+                    tempField.setPrice(tempPrice);
+                }
+            }
+        }
     }
 
     private void firstInit(){
