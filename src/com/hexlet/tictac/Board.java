@@ -11,10 +11,19 @@ public class Board {
     private final static int CORNER_FEATURE_PRICE = 2;
     private final static int CENTER_FEATURE_PRICE = 3;
     private final static int USUAL_PRICE = 1;
+    private final static int ABSOLUTE_ENEMY_PRICE = 200;
+    private final static int ABSOLUTE_WINNER_ON_NEXT_STEP_PRICE = 100;
 
     private final int INDEX_X = 0;
     private final int INDEX_Y = 1;
+
+    public final int HORIZONTAL_LINE = 1;
+    public final int VERTICAL_LINE = 2;
+    public final int DIAGONAL_FIRST = 3;
+    public final int DIAGONAL_SECOND = 4;
+
     private Integer stepCounter;
+
 
     public Board(int size){
         this(size, HUMAN_MODE);
@@ -95,8 +104,8 @@ public class Board {
         int y = currentXY[INDEX_Y];
         Cell tempField = fieldMatrix[x][y];
         tempField.setSymbol(player.getSymbol());
-        if (player.getIsFirst())
-            calculateFieldPrices(x, y);
+        if (gameMode.equals(COMP_MODE))
+            calculateFieldPrices(x, y, player.getSymbol());
     }
 
     public void goComputer(Player player) {
@@ -117,46 +126,76 @@ public class Board {
         }
         Cell tempField = fieldMatrix[maxI][maxJ];
         tempField.setSymbol(player.getSymbol());
-        if (player.getIsFirst())
-            calculateFieldPrices(maxI, maxJ);
+        //if (player.getIsFirst())
+            calculateFieldPrices(maxI, maxJ, player.getSymbol());
     }
 
-    private void calculateFieldPrices(int currentX, int currentY) {
-        int tempPrice;
-        Cell tempField;
+    private void calculateFieldPrices(int currentX, int currentY, char symbol) {
         for (int i = 0; i < board_size; i++)
         {
-            tempField = fieldMatrix[currentX][i];
-            if (tempField.getIsFilled() == false)
-            {
-                tempPrice = tempField.getPrice() + 1;
-                tempField.setPrice(tempPrice);
-            }
-            tempField = fieldMatrix[i][currentY];
-            if (tempField.getIsFilled() == false)
-            {
-                tempPrice = tempField.getPrice() + 1;
-                tempField.setPrice(tempPrice);
-            }
+            processPricesInLine(currentX, i, symbol, HORIZONTAL_LINE);
+            processPricesInLine(i, currentY, symbol, VERTICAL_LINE);
             if (currentX == currentY)
             {
-                tempField = fieldMatrix[i][i];
-                if (tempField.getIsFilled() == false)
-                {
-                    tempPrice = tempField.getPrice() + 1;
-                    tempField.setPrice(tempPrice);
-                }
+                processPricesInLine(i, i, symbol, DIAGONAL_FIRST);
             }
             if ((currentX + currentY) == (board_size - 1))
             {
-                tempField = fieldMatrix[i][board_size-1-i];
-                if (tempField.getIsFilled() == false)
-                {
-                    tempPrice = tempField.getPrice() + 1;
-                    tempField.setPrice(tempPrice);
-                }
+                processPricesInLine(i, board_size-1-i, symbol, DIAGONAL_SECOND);
             }
         }
+    }
+
+    private void processPricesInLine(int x, int y, char symbol, int type)
+    {
+        int tempPrice;
+        int friendlySymbolsCount = 0;
+        int enemySymbolsCount = 0;
+        boolean isEnemySymbolInLine = false;
+        Cell tempField;
+        char currentSymbol = Cell.EMPTY_SYMBOL;
+        tempField = fieldMatrix[x][y];
+        isEnemySymbolInLine = false;
+        friendlySymbolsCount = 0;
+        for (int j = 0; j < board_size; j++)
+        {
+            switch ( type )
+            {
+                case HORIZONTAL_LINE: currentSymbol = fieldMatrix[x][j].getSymbol(); break;
+                case VERTICAL_LINE: currentSymbol = fieldMatrix[j][y].getSymbol(); break;
+                case DIAGONAL_FIRST: currentSymbol = fieldMatrix[j][j].getSymbol(); break;
+                case DIAGONAL_SECOND: currentSymbol = fieldMatrix[j][board_size-1-j].getSymbol(); break;
+            }
+            if ((currentSymbol != symbol) && (currentSymbol != Cell.EMPTY_SYMBOL))
+            {
+                isEnemySymbolInLine = true;
+                enemySymbolsCount++;
+            }
+            if (currentSymbol == symbol)
+            {
+                friendlySymbolsCount ++;
+            }
+        }
+        if (!tempField.getIsFilled() && !isEnemySymbolInLine)
+        {
+            if (!isEnemySymbolInLine)
+            {
+                tempPrice = tempField.getPrice() + capacityFunc(friendlySymbolsCount);
+                tempField.setPrice(tempPrice);
+            }
+            if (enemySymbolsCount == board_size-1)
+                tempField.setPrice(ABSOLUTE_ENEMY_PRICE);
+            if (friendlySymbolsCount == board_size-1)
+                tempField.setPrice(ABSOLUTE_WINNER_ON_NEXT_STEP_PRICE);
+        }
+    }
+
+
+    private int capacityFunc(int n)
+    {
+        int ret = 0;
+        for (int i = 0; i <= n; ++i) ret += i*i;
+        return ret;
     }
 
     private void firstInit(){
