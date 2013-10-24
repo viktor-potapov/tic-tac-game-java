@@ -2,6 +2,7 @@ package com.hexlet;
 
 import com.hexlet.tictac.Board;
 import com.hexlet.tictac.Cell;
+import com.hexlet.tictac.Exceptiones.InvalidBorderConstructorParameters;
 import com.hexlet.tictac.IOPart;
 import com.hexlet.tictac.Player;
 
@@ -10,7 +11,18 @@ public class Main {
         System.out.println("Creating board...");
         IOPart io = new IOPart();
         String gameMode = io.askGameMode();
-        Board board = new Board(3, gameMode);
+        Board board = null;
+        try {
+            board = new Board(3, gameMode);
+        } catch (InvalidBorderConstructorParameters.SizeException e) {
+            System.out.println("Board size has to be odd number");
+        } catch (InvalidBorderConstructorParameters.GameModeException e) {
+            System.out.println("Game mode have to be equal \"comp\" or \"human\"");
+        }
+        finally {
+            if (board == null)
+                return;
+        }
         Player player1;
         Player player2;
         if (gameMode.equals(Board.HUMAN_MODE))

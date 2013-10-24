@@ -1,5 +1,8 @@
 package com.hexlet.tictac;
 
+
+import com.hexlet.tictac.Exceptiones.InvalidBorderConstructorParameters;
+
 public class Board {
 
     public final static String COMP_MODE = "comp";
@@ -25,17 +28,22 @@ public class Board {
     private Integer stepCounter;
 
 
-    public Board(int size){
+    public Board(int size) throws InvalidBorderConstructorParameters.GameModeException, InvalidBorderConstructorParameters.SizeException {
         this(size, HUMAN_MODE);
     }
 
-    public Board(int size, String gameMode){
+    public Board(int size, String gameMode) throws InvalidBorderConstructorParameters.GameModeException, InvalidBorderConstructorParameters.SizeException {
         this.board_size = size;
         stepCounter = size*size;
         this.gameMode = gameMode;
-        if ((size % 2) == 0){
-            System.out.println("Board size has to be odd number!!!!!!!!!!!!! AAAAAAAAAAAA");
-            return;
+        if ( size < 3 || (size % 2) == 0){
+            throw new InvalidBorderConstructorParameters.SizeException();
+           /* System.out.println("Board size has to be odd number!!!!!!!!!!!!! AAAAAAAAAAAA");
+            return;*/
+        }
+        if (!gameMode.equals(COMP_MODE) && !gameMode.equals(HUMAN_MODE))
+        {
+            throw new InvalidBorderConstructorParameters.GameModeException();
         }
         firstInit();
     }
